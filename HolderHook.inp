@@ -1,0 +1,104 @@
+***Model contains two parts (viz:Holder and Hook)
+***
+*HEADING
+Holder_Hook
+*** -------------------------------(1)
+***--Related to Holder part
+*INCLUDE,INPUT=NHolder.inp
+**Contains Node set--NHolder_All
+*INCLUDE,INPUT=EHolder.inp
+**Contains Element set--EHolder_All
+*INCLUDE,INPUT=Nfix_Holder.inp
+**Contains Node set--Nset_fix_Holder
+*INCLUDE,INPUT=E_S1_Holder.inp
+**Contains Element set--Eset_S1_Holder
+*INCLUDE,INPUT=E_S2_Holder.inp
+**Contains Element set--Eset_S2_Holder
+*INCLUDE,INPUT=E_S3_Holder.inp
+**Contains Element set--Eset_S3_Holder
+*INCLUDE,INPUT=E_S4_Holder.inp
+**Contains Element set--Eset_S4_Holder
+***--Related to Hook part
+*INCLUDE,INPUT=NHook.inp
+**Contains Node set--NHolder_All
+*INCLUDE,INPUT=EHook.inp
+**Contains Element set--EHook_All
+*INCLUDE,INPUT=Nslave_Hook.inp
+**Contains Node set--NslaveSet
+*INCLUDE,INPUT=Nyload_Hook.inp
+**Contains Node set--NyloadSet
+*INCLUDE,INPUT=Nzload_Hook.inp
+**Contains Node set--NzloadSet
+** --------------------------------(2)
+*MATERIAL, NAME=Steel
+*ELASTIC
+2.0E05,0.26
+**
+*MATERIAL, NAME=Copper
+*ELASTIC
+1.1E05,0.35
+** -------------------------------(3)
+*SOLID SECTION,ELSET=EHolder_All,MATERIAL=Steel
+**
+*SOLID SECTION,ELSET=EHook_All,MATERIAL=Copper
+**** ------------------------------(4)
+*SURFACE,NAME=slave_hook,TYPE=NODE
+NslaveSet
+****
+*SURFACE,NAME=master_holder,TYPE=ELEMENT
+Eset_S1_Holder,S1
+Eset_S2_Holder,S2
+Eset_S3_Holder,S3
+Eset_S4_Holder,S4
+** ---------------------------------(5)
+*SURFACE INTERACTION,NAME=SI1
+*SURFACE BEHAVIOR,PRESSURE-OVERCLOSURE=EXPONENTIAL
+0.01,10
+** ---------------------------------(6)
+*CONTACT PAIR,INTERACTION=SI1,ADJUST=0.01,SMALL SLIDING
+slave_hook,master_holder
+** ---------------------------------(7)
+*RIGID BODY,NSET=Nzloadset, REF NODE=15839
+*RIGID BODY,NSET=NyloadSet, REF NODE=15970
+** ---------------------------------(8)
+*BOUNDARY
+Nset_fix_Holder,1,3
+15839,1
+15970,1
+** ---------------------------------(9)
+*STEP,INC=1000
+*STATIC
+*CLOAD
+15839,3,-30000
+15970,2,-5000
+** ---------------------------------(10)
+*NODE FILE
+U
+*EL FILE
+S
+*CONTACT FILE
+CDIS,CSTR
+*END STEP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
